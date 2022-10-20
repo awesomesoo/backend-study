@@ -4,21 +4,32 @@ import Joi from 'joi';
 
 const { ObjectId } = mongoose.Types;
 
-export const checkObjectId = (ctx, next) => {
+export const getPostById = async (ctx, next) => {
   const { id } = ctx.params;
   if (!ObjectId.isValid(id)) {
     ctx.status = 400; // Bad Request
     return;
   }
-  return next();
+  try {
+    const post = await Post.findById(id);
+    // 포스트가 존재하지 않을 때
+    if (!post) {
+      ctx.status = 404; // Not Found
+      return;
+    }
+    ctx.state.post = post;
+    return next();
+  } catch (e) {
+    ctx.throw(500, e);
+  }
 };
 
 /*
  * POST /api/posts
  * {
- *   title: '제목',
- *   body: '내용',
- *   tags: ['태그1', '태그2']
+ * "title": "제목",
+ * "body": "내용",
+ * "tags": ["태그1", "태그2"]
  * }
  */
 export const write = async (ctx) => {
@@ -47,6 +58,7 @@ export const write = async (ctx) => {
     title,
     body,
     tags,
+    user: ctx.state.user,
   });
   try {
     await post.save();
@@ -99,7 +111,7 @@ export const list = async (ctx) => {
 /*
  * GET /api/posts/:id
  */
-export const read = async (ctx) => {
+/* export const read = async (ctx) => {
   const { id } = ctx.params;
   try {
     const post = await Post.findById(id).exec();
@@ -111,6 +123,10 @@ export const read = async (ctx) => {
   } catch (e) {
     ctx.throw(500, e);
   }
+}; */
+// id로 포스트를 찾는 코드를 간소화
+export const read = (ctx) => {
+  ctx.body = ctx.state.post;
 };
 
 /*
@@ -165,4 +181,15 @@ export const update = async (ctx) => {
   } catch (e) {
     ctx.throw(500, e);
   }
+};
+
+// id로 찾은 포스트가 로그인 중인 사용자가 작성한 포스트인지 확인
+// 만약 사용자의 포스트가 아니라면 403 에러
+export const checkOwnPost = (ctx, next) => {
+  const { user, post } = ctx.state;
+  if (post.user._id.toString() !== user._id) {
+    ctx.status = 403;
+    return;
+  }
+  return next();
 };
