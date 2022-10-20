@@ -68,9 +68,7 @@ export const write = async (ctx) => {
   }
 };
 
-/*
- * GET /api/posts
- */
+// GET /api/posts
 export const list = async (ctx) => {
   // query는 문자열이기 때문에 숫자로 변환해 주어야 합니다.
   // 값이 주어지지 않았다면 1을 기본으로 사용합니다.
@@ -115,9 +113,7 @@ export const list = async (ctx) => {
   }
 };
 
-/*
- * GET /api/posts/:id
- */
+// GET /api/posts/:id
 /* export const read = async (ctx) => {
   const { id } = ctx.params;
   try {
@@ -149,8 +145,8 @@ export const remove = async (ctx) => {
   }
 };
 
+// PATCH /api/posts/:id
 /*
- * PATCH /api/posts/:id
  * {
  *  title: '수정’,
  *   body: '수정 내용’,
