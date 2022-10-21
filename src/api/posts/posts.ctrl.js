@@ -98,7 +98,7 @@ const removeHtmlAndShorten = (body) => {
     allowedTags: [],
   });
   return filtered.length < 200 ? filtered : `${filtered.slice(0, 200)}...`;
-};
+}; 
 
 // GET /api/posts
 export const list = async (ctx) => {
