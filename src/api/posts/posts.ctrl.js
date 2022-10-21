@@ -45,11 +45,11 @@ export const write = async (ctx) => {
    const result = Joi.validate(body, schema); // 이전버전
    const validation = schema.validate(body); // 최신버전
    */
-  const validation = schema.validate(ctx.request.body);
+  const result = schema.validate(ctx.request.body);
   // const result = Joi.validate(ctx.request.body, schema);
-  if (validation.error) {
+  if (result.error) {
     ctx.status = 400; // Bad Request
-    ctx.body = validation.error;
+    ctx.body = result.error;
     return;
   }
 
@@ -163,11 +163,11 @@ export const update = async (ctx) => {
   });
 
   // 검증하고 나서 검증 실패인 경우 에러 처리
-  const validation = schema.validate(ctx.request.body);
+  const result = schema.validate(ctx.request.body);
   // const result = Joi.validate(ctx.request.body, schema);
-  if (validation.error) {
+  if (result.error) {
     ctx.status = 400; // Bad Request
-    ctx.body = validation.error;
+    ctx.body = result.error;
     return;
   }
 
